@@ -64,13 +64,13 @@ if mode == "1":
 else:
     while True:
         total_players = input(
-            "Enter total players in a tournament (Max 8 players can play and it must be an even number greater than 0)\nor 'q' to quit\n ")
+            "Enter total players in a tournament (Max 8 players can play and greater than 2)\nor 'q' to quit\n ")
         if total_players == "q":
             print("Exiting the game...")
             exit()
         total_players = int(total_players)
-        if total_players > 8 or total_players < 2 or total_players % 2 != 0:
-            print("Total players must be an even number between 2 and 8.")
+        if total_players > 8 or total_players < 2:
+            print("Total players must be between 2 and 8.")
             continue
         else:
             break
