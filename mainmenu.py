@@ -75,10 +75,11 @@ else:
         else:
             break
 
+    colors = ["white", "black"]
     player_list = []
     for i in range(1, total_players + 1):
         player_name = input(f"Enter name for Player {i}: ")
-        player_list.append(player_name)
+        player_list.append((player_name, random.choice(colors)))
 
     rounds = total_players - 1
     match_count = 0
@@ -94,27 +95,40 @@ else:
             players_copy.remove(p2)
         for match in round_matches:
             match_count += 1
-            print(f"Match {match_count}: {match[0]} vs {match[1]}")
-            round_matches_list.append((match[0], match[1], ""))
+            print(f"Match {match_count}: {match[0][0]}  vs {match[1][0]} ")
+            round_matches_list.append((match[0][0], match[1][0], ""))
         players_copy = player_list.copy()
 
-    first_match = round_matches_list[0]
-    print(f"First Game will be played between {first_match[0]} and {first_match[1]}")
+    current_match = 0
+    last_game_color = ""
     while True:
-        color_choice = input(f"\n{first_match[0]}, please select your color (white or black): ")
-        if color_choice.lower() not in ["white", "black"]:
-            print("Invalid color choice. Please choose again.")
-            continue
+        match = round_matches_list[current_match]
+        if last_game_color == match[0][1]:
+            player1_color = "white" if last_game_color == "black" else "black"
         else:
-            first_match = (first_match[0], first_match[1], color_choice.lower())
-            break
-    print(
-        f"\nFirst match: {first_match[0]} ({first_match[2]}) vs {first_match[1]} ({'black' if first_match[2] == 'white' else 'white'})")
+            player1_color = random.choice(colors)
+        player2_color = "white" if player1_color == "black" else "black"
+        print(f"\nMatch {current_match + 1}: {match[0]} ({player1_color}) vs {match[1]}({player2_color})")
 
-    if first_match[2] == "white":
-        print(f"{first_match[0]} will take the first turn.")
-    else:
-        print(f"{first_match[1]} will take the first turn.")
+        while True:
+            match_finished = input("Has the match finished? (y/n) ")
+            if match_finished.lower() == "y" and current_match < len(round_matches_list)-1:
+                round_matches_list[current_match] = (match[0], match[1], "Finished")
+                last_game_color = player1_color
+                current_match += 1
+                break
+            elif match_finished.lower() == "n":
+                if current_match == len(round_matches_list) - 1:
+                    print("All matches finished.")
+                    exit()
+                print(f"Next match: {round_matches_list[current_match + 1]}")
+                break
+            elif current_match == len(round_matches_list) - 1:
+                print("All matches finished.")
+                exit()
+
+            else:
+                print("Invalid input. Please enter 'y' or 'n'.")
 
 # Ask for player names in Human vs Human game type
 
