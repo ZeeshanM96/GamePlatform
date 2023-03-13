@@ -1,103 +1,108 @@
 import os
 import random
 
-print("Welcome to the game")
-input("Press Enter to proceed")
-game_type = ""
-# Clear the screen
-os.system("cls" if os.name == "nt" else "clear")
+def welcome():
+    print("Welcome to the game")
+    input("Press Any Key to proceed")
+    get_age()
 
-# Ask the user for their age
-while True:
-    try:
-        age = input("Please enter your age: ")
-        if age == "q":
-            print("Exiting the game...")
-            exit()
-        age = int(age)
-        if age >= 4:
-            break
-        else:
-            print("Sorry, you must be at least 4 years old to play this game.")
-    except ValueError:
-        print("Invalid input. Please enter a valid number.")
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
 
-# Display the game modes
-print("Game Modes:")
-print("1. 1 vs 1 Mode")
-print("2. Tournament Mode")
-
-# Ask the user to select a game mode
-while True:
-    mode = input("Enter your choice (1-2) or 'q' to quit: ")
-    if mode == "1":
-        print("You have selected 1 vs 1 Mode.")
-        break
-    elif mode == "2":
-        print("You have selected Tournament Mode.")
-        break
-    elif mode == "q":
-        print("Exiting the game...")
-        exit()
-    else:
-        print("Invalid option. Please try again.")
-
-# Ask the user to select the type of game in 1 vs 1 mode
-if mode == "1":
+def get_age():
     while True:
-        game_type = input(
-            "1 vs 1 Mode: Select game type (1-3)\n1. Human vs Human\n2. Human vs AI\n3. AI vs AI\nor 'q' to quit\nEnter your choice (1-3): ")
-        if game_type == "1":
-            print("You have selected Human vs Human.")
-            break
-        elif game_type == "2":
-            print("You have selected Human vs AI.")
-            break
-        elif game_type == "3":
-            print("You have selected AI vs AI.")
-            break
+        try:
+            age = input("Please enter your age: ")
+            if age == "q":
+                print("Exiting the game...")
+                exit()
+            age = int(age)
+            if age >= 4:
+                break
+            else:
+                print("Sorry, you must be at least 4 years old to play this game.")
+        except ValueError:
+            print("Invalid input. Please enter a valid number.")
+    return age
+
+def display_game_modes():
+    print("Game Modes:")
+    print("1. 1 vs 1 Mode")
+    print("2. Tournament Mode")
+
+def get_game_mode():
+    while True:
+        mode = input("Enter your choice (1-2) or 'q' to quit: ")
+        if mode == "1":
+            print("You have selected 1 vs 1 Mode.")
+            get_game_type(mode)
+            break;
+        elif mode == "2":
+            print("You have selected Tournament Mode.")
+            get_game_type(mode)
+            break;
         elif mode == "q":
             print("Exiting the game...")
             exit()
         else:
             print("Invalid option. Please try again.")
-else:
-    while True:
-        total_players = input(
-            "Enter total players in a tournament (Max 8 players can play and greater than 2)\nor 'q' to quit\n ")
-        if total_players == "q":
-            print("Exiting the game...")
-            exit()
-        total_players = int(total_players)
-        if total_players > 8 or total_players < 2:
-            print("Total players must be between 2 and 8.")
-            continue
-        else:
-            break
+    # get_game_type(mode)
 
-    colors = ["white", "black"]
-    player_list = []
-    for i in range(1, total_players + 1):
-        player_name = input(f"Enter name for Player {i}: ")
-        player_list.append((player_name, random.choice(colors)))
+def get_game_type(mode):
+    if mode == "1":
+        while True:
+            game_type = input("1 vs 1 Mode: Select game type (1-3)\n1. Human vs Human\n2. Human vs AI\n3. AI vs AI\nor 'q' to quit\nEnter your choice (1-3): ")
+            if game_type == "1":
+                print("You have selected Human vs Human.")
+                return game_type_1(game_type)
+            elif game_type == "2":
+                print("You have selected Human vs AI.")
+                return game_type_other(game_type)
+            elif game_type == "3":
+                print("You have selected AI vs AI.")
+                return game_type_other(game_type)
+            elif mode == "q":
+                print("Exiting the game...")
+                exit()
+            else:
+                print("Invalid option. Please try again.")
+    else:
+        while True:
+            total_players = input(
+                "Enter total players in a tournament (Max 8 players can play and greater than 2)\nor 'q' to quit\n ")
+            if total_players == "q":
+                print("Exiting the game...")
+                exit()
+            total_players = int(total_players)
+            if total_players > 8 or total_players < 2:
+                print("Total players must be between 2 and 8.")
+                continue
+            else:
+                break
 
-    rounds = total_players - 1
-    match_count = 0
-    players_copy = player_list.copy()
-    round_matches_list = []
-    for round_num in range(rounds):
-        print(f"\nRound {round_num + 1}:")
-        round_matches = []
-        for i in range(total_players // 2):
-            p1, p2 = random.sample(players_copy, 2)
-            round_matches.append((p1, p2))
-            players_copy.remove(p1)
-            players_copy.remove(p2)
-        for match in round_matches:
-            match_count += 1
-            print(f"Match {match_count}: {match[0][0]}  vs {match[1][0]} ")
-            round_matches_list.append((match[0][0], match[1][0], ""))
+        colors = ["white", "black"]
+        player_list = []
+        for i in range(1, total_players + 1):
+            player_name = input(f"Enter name for Player {i}: ")
+            player_list.append((player_name, random.choice(colors)))
+        return player_list
+        rounds = total_players - 1
+        match_count = 0
         players_copy = player_list.copy()
+        round_matches_list = []
+        for round_num in range(rounds):
+            print(f"\nRound {round_num + 1}:")
+            round_matches = []
+            for i in range(total_players // 2):
+                p1, p2 = random.sample(players_copy, 2)
+                round_matches.append((p1, p2))
+                players_copy.remove(p1)
+                players_copy.remove(p2)
+            for match in round_matches:
+                match_count += 1
+                print(f"Match {match_count}: {match[0][0]}  vs {match[1][0]} ")
+                round_matches_list.append((match[0][0], match[1][0], ""))
+            players_copy = player_list.copy()
 
     current_match = 0
     last_game_color = ""
@@ -130,9 +135,7 @@ else:
             else:
                 print("Invalid input. Please enter 'y' or 'n'.")
 
-# Ask for player names in Human vs Human game type
-
-if game_type == "1":
+def game_type_1(gametype):
     print("Enter the player names or enter 'q' to exit from the game. ")
     player1_name = input("Enter name of Player 1: ")
     player2_name = input("Enter name of Player 2: ")
@@ -185,7 +188,7 @@ if game_type == "1":
     else:
         print(f"{player2_name} will play first.")
 
-if game_type == "2" or game_type == "3":
+def game_type_other(gametype):
     while True:
         ai_difficulty = input("Select level of difficulty for AI (1- Noob, 2- Intermediate, 3- Pro)  or enter 'q' to exit from the game: : ")
         if ai_difficulty == "q":
@@ -250,3 +253,36 @@ if game_type == "2" or game_type == "3":
         print(f"{player1_name} will play first.")
     else:
         print(f"{player2_name} will play first.")
+
+## this function will keep the count of player win track and will display the result at the end of the game.
+#player_list is the list of players we created above.
+#player_won is the name of the player which has won the game.
+#matches_finished can be boolean type that returned as True or False, if retured true then it will call the funtion final_score() which displays the winner in the end.
+def game_score(player_list, player_won, matches_finished):
+    ## here we are converting the list into the dictionary.
+    my_dict = {}
+    for key in player_list:
+        if key == player_won:
+            if key in my_dict:
+                my_dict[key] += 1
+            else:
+                my_dict[key] = 1
+        else:
+            my_dict[key] = 0
+    print(my_dict)
+    if matches_finished == True:
+        final_score(my_dict)
+
+def final_score(my_dict):
+    winner = max(my_dict, key=my_dict.get)
+    print(f"{winner} has won the game! Congragulations")
+
+
+
+
+if __name__ == "__main__":
+    welcome()
+    display_game_modes()
+    get_game_mode()
+
+
