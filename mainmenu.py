@@ -68,8 +68,7 @@ def get_game_type(mode):
                 print("Invalid option. Please try again.")
     else:
         while True:
-            total_players = input(
-                "Enter total players in a tournament (Max 8 players can play and greater than 2)\nor 'q' to quit\n ")
+            total_players = input("Enter total players in a tournament (Max 8 players can play and greater than 2) or 'q' to quit : ")
             if total_players == "q":
                 print("Exiting the game...")
                 exit()
