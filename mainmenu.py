@@ -85,7 +85,7 @@ def get_game_type(mode):
         for i in range(1, total_players + 1):
             player_name = input(f"Enter name for Player {i}: ")
             player_list.append((player_name, random.choice(colors)))
-        return player_list
+        
         rounds = total_players - 1
         match_count = 0
         players_copy = player_list.copy()
@@ -134,6 +134,7 @@ def get_game_type(mode):
 
             else:
                 print("Invalid input. Please enter 'y' or 'n'.")
+        return player_list
 
 def game_type_1(gametype):
     print("Enter the player names or enter 'q' to exit from the game. ")
