@@ -133,7 +133,7 @@ def get_game_type(mode):
 
             else:
                 print("Invalid input. Please enter 'y' or 'n'.")
-        return player_list
+    return player_list
 
 def game_type_1(gametype):
     print("Enter the player names or enter 'q' to exit from the game. ")
