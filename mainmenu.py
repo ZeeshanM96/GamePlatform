@@ -1,5 +1,6 @@
 import os
 import random
+from game_loop import game
 
 def welcome():
     print("Welcome to the game")
@@ -36,11 +37,11 @@ def get_game_mode():
         if mode == "1":
             print("You have selected 1 vs 1 Mode.")
             get_game_type(mode)
-            break;
+            break
         elif mode == "2":
             print("You have selected Tournament Mode.")
             get_game_type(mode)
-            break;
+            break
         elif mode == "q":
             print("Exiting the game...")
             exit()
@@ -54,13 +55,13 @@ def get_game_type(mode):
             game_type = input("1 vs 1 Mode: Select game type (1-3)\n1. Human vs Human\n2. Human vs AI\n3. AI vs AI\nor 'q' to quit\nEnter your choice (1-3): ")
             if game_type == "1":
                 print("You have selected Human vs Human.")
-                return game_type_1(game_type)
+                return game_type_1()
             elif game_type == "2":
                 print("You have selected Human vs AI.")
-                return game_type_other(game_type)
+                return game_type_other("HvAI")
             elif game_type == "3":
                 print("You have selected AI vs AI.")
-                return game_type_other(game_type)
+                return game_type_other("AIvsAI")
             elif mode == "q":
                 print("Exiting the game...")
                 exit()
@@ -81,10 +82,11 @@ def get_game_type(mode):
 
         colors = ["white", "black"]
         player_list = []
+        win_count ={}
         for i in range(1, total_players + 1):
             player_name = input(f"Enter name for Player {i}: ")
             player_list.append((player_name, random.choice(colors)))
-        
+
         rounds = total_players - 1
         match_count = 0
         players_copy = player_list.copy()
@@ -115,25 +117,29 @@ def get_game_type(mode):
         print(f"\nMatch {current_match + 1}: {match[0]} ({player1_color}) vs {match[1]}({player2_color})")
 
         while True:
-            match_finished = input("Has the match finished? (y/n) ")
-            if match_finished.lower() == "y" and current_match < len(round_matches_list)-1:
-                round_matches_list[current_match] = (match[0], match[1], "Finished")
-                last_game_color = player1_color
-                current_match += 1
-                break
-            elif match_finished.lower() == "n":
+            if player1_color == "white":
+                curr_game = game(match[1], match[0])
+            else:
+                curr_game = game(match[0], match[1])
+            curr_game.start()
+            if curr_game.winner is None:
                 if current_match == len(round_matches_list) - 1:
+                    final_score(win_count)
                     print("All matches finished.")
                     exit()
+                print("Game cancelled.")
                 print(f"Next match: {round_matches_list[current_match + 1]}")
                 break
-            elif current_match == len(round_matches_list) - 1:
-                print("All matches finished.")
-                exit()
-
-            else:
-                print("Invalid input. Please enter 'y' or 'n'.")
-    return player_list
+            elif curr_game.winner == match[0] or curr_game.winner == match[1]:
+                round_matches_list[current_match] = (match[0], match[1], "Finished")
+                last_game_color = player1_color
+                game_score(win_count, curr_game.winner, False)
+                current_match += 1
+                break
+        if current_match == len(round_matches_list) - 1:
+            final_score(win_count)
+            print("All matches finished.")
+            exit()
 
 def game_type_1(gametype):
     print("Enter the player names or enter 'q' to exit from the game. ")
@@ -172,21 +178,12 @@ def game_type_1(gametype):
 
     print(f"{player1_name} has selected {player1_color} and {player2_name} has selected {player2_color}.")
 
-    # Ask for player turn
-    while True:
-        player_turn = input(f"{player1_name} : If you want first turn then enter 1 otherwise 2 or enter 'q' to exit from the game: ")
-        if player_turn == "q":
-            print("Exiting the game...")
-            exit()
-        elif player_turn == "1" or player_turn == "2":
-            break
-        else:
-            print("Invalid input! Please enter 1 for first turn or 2 for second turn.")
-
-    if player_turn == "1":
-        print(f"{player1_name} will play first.")
+    # Start the game
+    if player1_color == "white":
+        curr_game = game(player2_name, player1_name)
     else:
-        print(f"{player2_name} will play first.")
+        curr_game = game(player1_name, player2_name)
+    curr_game.start()
 
 def game_type_other(gametype):
     while True:
@@ -225,59 +222,39 @@ def game_type_other(gametype):
             break
         else:
             print("Invalid input! Please choose either Black or White.")
-
-    while True:
-        player2_color = input("Player 2: Choose your color (Black or White) or enter 'q' to exit from the game: ").lower()
-        if player2_color == "q":
-            print("Exiting the game...")
-            exit()
-        elif player2_color == "black" or player2_color == "white":
-            if player2_color != player1_color:
-                break
-            else:
-                print("Both players can't have the same color. Please choose a different color.")
-        else:
-            print("Invalid input! Please choose either Black or White.")
-
-    while True:
-        player_turn = input(f"{player1_name} : If you want first turn then enter 1 otherwise 2 or enter 'q' to exit from the game. : ")
-        if player_turn == "q":
-            print("Exiting the game...")
-            exit()
-        elif player_turn == "1" or player_turn == "2":
-            break
-        else:
-            print("Invalid input! Please enter 1 for first turn or 2 for second turn.")
-
-    if player_turn == "1":
-        print(f"{player1_name} will play first.")
+    print("Game type is: ", gametype)
+    if gametype == "HvAI":
+        if player1_color == "black":
+            curr_game = game(player1_name, player2_name)
+        elif player1_color == "white":
+            curr_game = game(player2_name, player1_name)
+    elif gametype == "AIvAI":
+        if player1_color == "black":
+            curr_game = game(player1_name, player2_name)
+        elif player1_color == "white":
+            curr_game = game(player2_name, player1_name)
     else:
-        print(f"{player2_name} will play first.")
+        print("Something went wrong. Please try again.")
+        exit()
+    curr_game.start()
 
 ## this function will keep the count of player win track and will display the result at the end of the game.
 #player_list is the list of players we created above.
 #player_won is the name of the player which has won the game.
 #matches_finished can be boolean type that returned as True or False, if retured true then it will call the funtion final_score() which displays the winner in the end.
-def game_score(player_list, player_won, matches_finished):
-    ## here we are converting the list into the dictionary.
-    my_dict = {}
-    for key in player_list:
-        if key == player_won:
-            if key in my_dict:
-                my_dict[key] += 1
-            else:
-                my_dict[key] = 1
-        else:
-            my_dict[key] = 0
-    print(my_dict)
+def game_score(win_count, player_won, matches_finished):
+    if player_won in win_count:
+        win_count[player_won] += 1
+    else:
+        win_count[player_won] = 1
+
+    print(win_count)
     if matches_finished == True:
-        final_score(my_dict)
+        final_score(win_count)
 
 def final_score(my_dict):
     winner = max(my_dict, key=my_dict.get)
     print(f"{winner} has won the game! Congragulations")
-
-
 
 
 if __name__ == "__main__":
