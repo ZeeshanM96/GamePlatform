@@ -55,5 +55,4 @@ The code is organized into several features:
 •	Play Game - runs the Tournament module game, prompts the user for moves, and checks for game conditions.
 •	End Game - prompts the user to start a new game or quit and checks if it is a valid input.
 
-Overall, the code follows a modular and organized structure, making it easy to understand and modify.
 
